@@ -2,10 +2,10 @@ import React from 'react'
 import Navbar from './Navbar'
 import { Outlet } from 'react-router-dom'
 
-export default function Layout() {
+export default function Layout({userDAta}) {
   return (
     <>
-    <Navbar/>
+    <Navbar userDAta={userDAta} />
     <Outlet/>
     </>
   )

@@ -1,37 +1,80 @@
+import axios from 'axios';
 import React from 'react'
+import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 
 export default function Register() {
+
+    let navigate = useNavigate()
+
+    const [user, setuser] = useState({
+        "first_name": "",
+        "last_name": "",
+        "email": "",
+        "password": ""
+
+
+    });
+
+    const [isLoading, setisLoading] = useState(false);
+    const [error, seterror] = useState("");
+    const [message,setmessage] = useState("");
+
+    function getUserData({ target }) {
+        // console.log(target.value);
+        setuser({ ...user, [target.name]: target.value });
+
+    }
+
+    async function register(e) {
+        e.preventDefault();
+        seterror("")
+        setisLoading(true)
+        console.log(user);
+
+
+        let { data } = await axios.post(`https://sticky-note-fe.vercel.app/signup`, user)
+        if(data.message === 'success'){
+            setmessage(data.message)
+            navigate('/login')
+
+        }else {
+            seterror(data.message)
+        }
+
+
+        setisLoading(false)
+        console.log(data);
+    }
     return (
         <div>
 
             <div className="container my-5 py-5">
                 <div className="col-md-5 m-auto text-center">
-                    <form >
+                    <form onSubmit={register}>
                         <div className="form-group">
-                            <input autoComplete='true' placeholder="Enter your name" name="first_name" type="text" className=" form-control" />
+                            <input onChange={getUserData} autoComplete='true' placeholder="Enter your name" name="first_name" type="text" className=" form-control" />
                         </div>
                         <div className="form-group my-2 ">
-                            <input autoComplete='true' placeholder="Enter your name" name="last_name" type="text" className="form-control" />
+                            <input onChange={getUserData} autoComplete='true' placeholder="Enter your name" name="last_name" type="text" className="form-control" />
                         </div>
                         <div className="form-group">
-                            <input autoComplete='true' placeholder="Enter email" type="email" name="email" className="form-control" />
+                            <input onChange={getUserData} autoComplete='true' placeholder="Enter email" type="email" name="email" className="form-control" />
                         </div>
                         <div className="form-group my-2">
-                            <input autoComplete='true' placeholder="Enter you password" type="password" name="password" className=" form-control" />
+                            <input onChange={getUserData} autoComplete='true' placeholder="Enter you password" type="password" name="password" className=" form-control" />
                         </div>
-                        <button type="submit" className={'btn btn-info w-100 '}>Register</button>
+                        <button type="submit" className={'btn btn-info w-100 ' + (isLoading ? "disabled" : "")}>{isLoading === true ? <i className="fa fa-spinner fa-spin" aria-hidden="true"></i> : "Register"}</button>
 
-                        <div className="alert alert-danger mt-2">
 
-                        </div>
-                        {/* {message && <div className="alert alert-success mt-2">
-                            {message}
-                        </div>} */}
 
-                        {/* 
-                        {error != "" ? <div className="alert alert-danger mt-2">
+                        {error && <div className="alert alert-danger mt-2">
                             {error}
-                        </div>:""} */}
+                        </div>}
+
+                      {message &&   <div className="alert alert-success mt-2">
+                            {message}
+                        </div>}
 
 
                     </form>
